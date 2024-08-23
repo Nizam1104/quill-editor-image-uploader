@@ -163,11 +163,12 @@ class ImageUploader {
         if (range && this.placeholderDelta) {
             const lengthToDelete = this.calculatePlaceholderInsertLength();
             
-            // Delete the placeholder image
-            this.quill.deleteText(range.index, lengthToDelete, "user");
+            // Remove the base64 image
+            this.removeBase64Image();
+            
             // Insert the server saved image
             this.quill.insertEmbed(range.index, "image", `${url}`, "user");
-
+    
             range.index++;
             this.quill.setSelection(range, "user");
         }
