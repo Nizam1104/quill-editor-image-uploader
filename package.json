@@ -1,5 +1,5 @@
 {
-    "name": "vueup-quill-image-uploader",
+    "name": "quill-editor-image-uploader",
     "version": "1.0.0",
     "repository": "https://github.com/Nizam1104/quill-editor-image-uploader.git",
     "description": "A module for Quill rich text editor to allow images to be uploaded to a server instead of being base64 encoded",
