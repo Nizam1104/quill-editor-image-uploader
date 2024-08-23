@@ -116,9 +116,9 @@ class ImageUploader {
 
     readAndUploadFile(file) {
         let isUploadReject = false;
-
+    
         const fileReader = new FileReader();
-
+    
         fileReader.addEventListener(
             "load",
             () => {
@@ -129,15 +129,15 @@ class ImageUploader {
             },
             false
         );
-
+    
         if (file) {
             fileReader.readAsDataURL(file);
         }
-
+    
         this.options.upload(file).then(
             (imageUrl) => {
-                this.insertToEditor(imageUrl);
                 this.removeBase64Image();
+                this.insertToEditor(imageUrl);
             },
             (error) => {
                 isUploadReject = true;
@@ -179,8 +179,13 @@ class ImageUploader {
 
     // The length of the insert delta from insertBase64Image can vary depending on what part of the line the insert occurs
     calculatePlaceholderInsertLength() {
+        if (!this.placeholderDelta || !this.placeholderDelta.ops) {
+            console.warn("calculatePlaceholderInsertLength method was called before placeholderDelta was set");
+            return 0;
+        }
+
         return this.placeholderDelta.ops.reduce((accumulator, deltaOperation) => {            
-            if (deltaOperation.hasOwnProperty('insert'))
+            if (deltaOperation && deltaOperation.hasOwnProperty('insert'))
                 accumulator++;
 
             return accumulator;
