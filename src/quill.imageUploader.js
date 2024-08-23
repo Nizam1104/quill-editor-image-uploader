@@ -136,7 +136,6 @@ class ImageUploader {
     
         this.options.upload(file).then(
             (imageUrl) => {
-                this.removeBase64Image();
                 this.insertToEditor(imageUrl);
             },
             (error) => {
@@ -165,7 +164,6 @@ class ImageUploader {
 
     insertToEditor(url) {
         const range = this.range;        
-
         const lengthToDelete = this.calculatePlaceholderInsertLength();        
         
         // Delete the placeholder image
