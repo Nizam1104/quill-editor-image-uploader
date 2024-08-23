@@ -116,34 +116,34 @@ class ImageUploader {
 
     readAndUploadFile(file) {
         let isUploadReject = false;
-    
+
         const fileReader = new FileReader();
-    
+
         fileReader.addEventListener(
             "load",
             () => {
                 if (!isUploadReject) {
                     let base64ImageSrc = fileReader.result;
                     this.insertBase64Image(base64ImageSrc);
+                    
+                    this.options.upload(file).then(
+                        (imageUrl) => {
+                            this.insertToEditor(imageUrl);
+                        },
+                        (error) => {
+                            isUploadReject = true;
+                            this.removeBase64Image();
+                            console.warn(error);
+                        }
+                    );
                 }
             },
             false
         );
-    
+
         if (file) {
             fileReader.readAsDataURL(file);
         }
-    
-        this.options.upload(file).then(
-            (imageUrl) => {
-                this.insertToEditor(imageUrl);
-            },
-            (error) => {
-                isUploadReject = true;
-                this.removeBase64Image();
-                console.warn(error);
-            }
-        );
     }
 
     fileChanged() {
