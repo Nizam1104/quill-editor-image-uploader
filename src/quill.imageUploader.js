@@ -129,6 +129,8 @@ class ImageUploader {
                     this.options.upload(file).then(
                         (imageUrl) => {
                             this.insertToEditor(imageUrl);
+                            // Set focus to the editor after successful upload
+                            this.quill.focus();
                         },
                         (error) => {
                             isUploadReject = true;
@@ -171,7 +173,8 @@ class ImageUploader {
         // Insert the server saved image
         this.quill.insertEmbed(range.index, "image", `${url}`, "user");
 
-        range.index++;
+        // Update the range to place the cursor after the inserted image
+        range.index += 1;
         this.quill.setSelection(range, "user");
     }
 
