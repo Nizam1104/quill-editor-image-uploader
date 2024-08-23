@@ -12,16 +12,16 @@ Adds a button to the toolbar for users to click, also handles drag,dropped and p
 Install with npm:
 
 ```bash
-npm install quill-image-uploader --save
+npm install quill-editor-image-uploader --save
 ```
 
 ### Webpack/ES6
 
 ```javascript
 import Quill from "quill";
-import ImageUploader from "quill-image-uploader";
+import ImageUploader from "quill-editor-image-uploader";
 
-import 'quill-image-uploader/dist/quill.imageUploader.min.css';
+import 'quill-editor-image-uploader/dist/quill.imageUploader.min.css';
 
 Quill.register("modules/imageUploader", ImageUploader);
 
