@@ -190,7 +190,6 @@ class ImageUploader {
     }
 
     removeBase64Image() {        
-        console.log('remveBase64Image called')
         const range = this.range;
         const lengthToDelete = this.calculatePlaceholderInsertLength();
 
