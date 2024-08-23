@@ -76,4 +76,9 @@ var quill = new Quill(editor, {
     }
   }
 });
-```
+
+## Credits
+
+This module was originally created by [Noel O Connell](https://github.com/NoelOConnell). 
+
+I have made some changes to the original code to fix some bugs and improve the code.
