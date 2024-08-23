@@ -178,7 +178,6 @@ class ImageUploader {
     // The length of the insert delta from insertBase64Image can vary depending on what part of the line the insert occurs
     calculatePlaceholderInsertLength() {
         if (!this.placeholderDelta || !this.placeholderDelta.ops) {
-            console.warn("calculatePlaceholderInsertLength method was called before placeholderDelta was set");
             return 0;
         }
 
