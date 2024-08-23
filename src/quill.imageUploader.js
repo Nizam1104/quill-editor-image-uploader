@@ -4,8 +4,8 @@ class ImageUploader {
     constructor(quill, options) {
         this.quill = quill;
         this.options = options;
-        this.range = null;
-        this.placeholderDelta = null;
+        this.range = null;             
+        this.placeholderDelta = null; 
 
         if (typeof this.options.upload !== "function")
             console.warn(
@@ -25,6 +25,7 @@ class ImageUploader {
     }
 
     selectLocalImage() {
+        this.quill.focus();
         this.range = this.quill.getSelection();
         this.fileHolder = document.createElement("input");
         this.fileHolder.setAttribute("type", "file");
@@ -74,10 +75,12 @@ class ImageUploader {
                 }
             }
 
+            this.quill.focus();
             this.range = this.quill.getSelection();
             let file = evt.dataTransfer.files[0];
 
             setTimeout(() => {
+                this.quill.focus();
                 this.range = this.quill.getSelection();
                 this.readAndUploadFile(file);
             }, 0);
@@ -97,9 +100,11 @@ class ImageUploader {
                     let file = items[i].getAsFile ? items[i].getAsFile() : items[i];
 
                     if (file) {
+                        this.quill.focus();
                         this.range = this.quill.getSelection();
                         evt.preventDefault();
                         setTimeout(() => {
+                            this.quill.focus();
                             this.range = this.quill.getSelection();
                             this.readAndUploadFile(file);
                         }, 0);
@@ -132,6 +137,7 @@ class ImageUploader {
         this.options.upload(file).then(
             (imageUrl) => {
                 this.insertToEditor(imageUrl);
+                this.removeBase64Image();
             },
             (error) => {
                 isUploadReject = true;
@@ -148,50 +154,45 @@ class ImageUploader {
 
     insertBase64Image(url) {
         const range = this.range;
-        if (range) {
-            this.placeholderDelta = this.quill.insertEmbed(
-                range.index,
-                LoadingImage.blotName,
-                `${url}`,
-                "user"
-            );
-        }
+                
+        this.placeholderDelta = this.quill.insertEmbed(
+            range.index,
+            LoadingImage.blotName,
+            `${url}`,
+            "user"
+        );
     }
 
     insertToEditor(url) {
-        const range = this.range;
-        if (range && this.placeholderDelta) {
-            const lengthToDelete = this.calculatePlaceholderInsertLength();
-            
-            // Remove the base64 image
-            this.removeBase64Image();
-            
-            // Insert the server saved image
-            this.quill.insertEmbed(range.index, "image", `${url}`, "user");
-    
-            range.index++;
-            this.quill.setSelection(range, "user");
-        }
+        const range = this.range;        
+
+        const lengthToDelete = this.calculatePlaceholderInsertLength();        
+        
+        // Delete the placeholder image
+        this.quill.deleteText(range.index, lengthToDelete, "user");
+        // Insert the server saved image
+        this.quill.insertEmbed(range.index, "image", `${url}`, "user");
+
+        range.index++;
+        this.quill.setSelection(range, "user");
     }
 
+    // The length of the insert delta from insertBase64Image can vary depending on what part of the line the insert occurs
     calculatePlaceholderInsertLength() {
-        if (this.placeholderDelta && this.placeholderDelta.ops) {
-            return this.placeholderDelta.ops.reduce((accumulator, deltaOperation) => {            
-                if (deltaOperation.hasOwnProperty('insert'))
-                    accumulator++;
+        return this.placeholderDelta.ops.reduce((accumulator, deltaOperation) => {            
+            if (deltaOperation.hasOwnProperty('insert'))
+                accumulator++;
 
-                return accumulator;
-            }, 0);
-        }
-        return 0;
+            return accumulator;
+        }, 0);
     }
 
-    removeBase64Image() {
+    removeBase64Image() {        
+        console.log('remveBase64Image called')
         const range = this.range;
-        if (range && this.placeholderDelta) {
-            const lengthToDelete = this.calculatePlaceholderInsertLength();
-            this.quill.deleteText(range.index, lengthToDelete, "user");
-        }
+        const lengthToDelete = this.calculatePlaceholderInsertLength();
+
+        this.quill.deleteText(range.index, lengthToDelete, "user");
     }
 }
 
