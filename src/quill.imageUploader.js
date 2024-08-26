@@ -117,31 +117,49 @@ class ImageUploader {
     readAndUploadFile(file) {
         let isUploadReject = false;
 
-        const fileReader = new FileReader();
-
-        fileReader.addEventListener(
-            "load",
-            () => {
-                if (!isUploadReject) {
-                    let base64ImageSrc = fileReader.result;
-                    this.insertBase64Image(base64ImageSrc);
-                    
-                    this.options.upload(file).then(
-                        (imageUrl) => {
-                            this.insertToEditor(imageUrl);
-                        },
-                        (error) => {
-                            isUploadReject = true;
-                            this.removeBase64Image();
-                            console.warn(error);
-                        }
-                    );
+        // Check file size
+        if (file.size > 1024 * 1024) { // 1 MB in bytes
+            // File is larger than 1 MB
+            this.options.upload(file).then(
+                (imageUrl) => {
+                    if (imageUrl !== '') {
+                        this.insertToEditor(imageUrl);
+                    }
+                },
+                (error) => {
+                    console.warn(error);
                 }
-            },
-            false
-        );
+            );
+        } else {
+            // File is 1 MB or smaller, proceed with base64 insertion
+            const fileReader = new FileReader();
 
-        if (file) {
+            fileReader.addEventListener(
+                "load",
+                () => {
+                    if (!isUploadReject) {
+                        let base64ImageSrc = fileReader.result;
+                        this.insertBase64Image(base64ImageSrc);
+                        
+                        this.options.upload(file).then(
+                            (imageUrl) => {
+                                if (imageUrl !== '') {
+                                    this.insertToEditor(imageUrl);
+                                } else {
+                                    this.removeBase64Image();
+                                }
+                            },
+                            (error) => {
+                                isUploadReject = true;
+                                this.removeBase64Image();
+                                console.warn(error);
+                            }
+                        );
+                    }
+                },
+                false
+            );
+
             fileReader.readAsDataURL(file);
         }
     }
